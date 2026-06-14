@@ -15,6 +15,7 @@ SOURCE_DIR = ROOT / "outputs" / "小红书已完成专题"
 SITE_DIR = ROOT / "outputs" / "uzbek-notes-site"
 CONFIG_PATH = SITE_DIR / "tools" / "site.config.json"
 SITE_BASE_PATH = "/quiet-atlas"
+SOURCE_ASSETS_DIR = ROOT / "content" / "assets"
 DINING_SOURCE = ROOT / "outputs" / "GoogleMaps_110条_整理标注总表.csv"
 OTHER_AUTHOR_SOURCE = ROOT / "outputs" / "final16_继续读取_处理结果.csv"
 USER_ADDRESS_SOURCE = ROOT / "outputs" / "用户补充地址_地图核验.csv"
@@ -4107,6 +4108,9 @@ if (visaCalculator) {
 """
     (SITE_DIR / "assets" / "styles.css").write_text(styles.strip() + "\n", encoding="utf-8")
     (SITE_DIR / "assets" / "site.js").write_text(script.strip() + "\n", encoding="utf-8")
+    alipay_qr = SOURCE_ASSETS_DIR / "alipay-train-qr.jpg"
+    if alipay_qr.exists():
+        shutil.copy2(alipay_qr, SITE_DIR / "assets" / "alipay-train-qr.jpg")
 
 
 def write_readme() -> None:
