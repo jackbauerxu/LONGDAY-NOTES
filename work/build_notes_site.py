@@ -1382,9 +1382,9 @@ def page_shell(config: dict[str, Any], title: str, body: str, description: str =
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{desc}">
     <title>{html.escape(title)} - {site_name}</title>
-    <link rel="stylesheet" href="{site_url('/assets/styles.css')}?v=20260614-train-fix">
-    <script src="{site_url('/tools/runtime-config.js')}?v=20260614-train-fix"></script>
-    <script defer src="{site_url('/assets/site.js')}?v=20260614-train-fix"></script>
+    <link rel="stylesheet" href="{site_url('/assets/styles.css')}?v=20260614-payment-note">
+    <script src="{site_url('/tools/runtime-config.js')}?v=20260614-payment-note"></script>
+    <script defer src="{site_url('/assets/site.js')}?v=20260614-payment-note"></script>
   </head>
   <body>
     <header class="site-header">
@@ -2073,6 +2073,9 @@ def render_train_tickets() -> str:
             <input type="file" accept="image/*" data-train-proof>
             <small>请上传支付宝付款成功页完整截图，截图里必须完整显示支付宝业务流水号、付款金额和付款时间。</small>
           </label>
+          <div class="tool-actions">
+            <button class="button primary" type="button" data-train-submit-payment>提交付款资料</button>
+          </div>
         </div>
       </section>
 """
@@ -3289,10 +3292,13 @@ if (trainTicketTool) {
   const paidAtInput = trainTicketTool.querySelector("[data-train-paid-at]");
   const proofInput = trainTicketTool.querySelector("[data-train-proof]");
   const paymentStep = trainTicketTool.querySelector("[data-train-payment-step]");
+  const submitPaymentButton = trainTicketTool.querySelector("[data-train-submit-payment]");
   const createButton = trainTicketTool.querySelector("[data-train-create-order]");
   const result = trainTicketTool.querySelector("[data-train-result]");
   let selectedOffer = null;
   let currentOffers = [];
+  let currentOrderId = "";
+  const ticketServiceNotice = "付款成功后 3 小时内出票；如最终无票，100%退款。建议最好提前 1 到 2 天订票。";
 
   const htmlEscape = (value) => String(value || "")
     .replaceAll("&", "&amp;")
@@ -3750,10 +3756,51 @@ if (trainTicketTool) {
       `所选车次：${htmlEscape(selectedOffer.trainNo)} · ${htmlEscape(selectedOffer.seat)} · ${htmlEscape(selectedOffer.seatDetail)} · 开车 ${htmlEscape(selectedOffer.departTime)} · 到达 ${htmlEscape(selectedOffer.arriveTime)} · 运行 ${htmlEscape(selectedOffer.duration)}`,
       `路线：${htmlEscape(fromInput.value)} → ${htmlEscape(toInput.value)}，${htmlEscape(dateInput.value)}，${htmlEscape(passengersInput.value)} 人，${htmlEscape(seatInput.value)}`,
       "语言转换：中文站名、证件类型和国籍会在服务端转换为订票流程需要的标准格式；乘客姓名请按护照英文填写。",
+      ticketServiceNotice,
       passengerSummary(passengers),
       `联系人：微信 ${htmlEscape(contactWechatInput.value)}；手机 ${htmlEscape(contactPhoneInput.value)}；邮箱 ${htmlEscape(contactEmailInput.value)}`,
       `<button class="button primary" type="button" data-train-confirm-preview>确认无误，进入付款</button>`
     ].join("<br>");
+    currentOrderId = order.order_id || "";
+  };
+
+  const submitPaymentProof = async () => {
+    const missing = [];
+    if (!currentOrderId) missing.push("订单号");
+    if (!payRefInput.value.trim()) missing.push("支付宝业务流水号");
+    if (!paidAmountInput.value || Number(paidAmountInput.value) <= 0) missing.push("付款金额");
+    if (!paidAtInput.value) missing.push("付款时间");
+    if (!proofInput.files || !proofInput.files.length) missing.push("付款成功截图");
+    if (missing.length) {
+      result.classList.remove("is-ok");
+      result.classList.add("is-warn");
+      result.insertAdjacentHTML("beforeend", `<br>请先补全：<strong>${missing.map(htmlEscape).join("、")}</strong>。`);
+      return;
+    }
+    submitPaymentButton.disabled = true;
+    submitPaymentButton.textContent = "正在提交...";
+    const form = new FormData();
+    form.append("payment_ref", payRefInput.value.trim());
+    form.append("paid_amount", paidAmountInput.value);
+    form.append("paid_at", paidAtInput.value);
+    form.append("proof", proofInput.files[0]);
+    try {
+      const response = await fetch(`${getTrainApiBase()}/api/train-orders/${encodeURIComponent(currentOrderId)}/payment`, {
+        method: "POST",
+        body: form,
+      });
+      if (!response.ok) throw new Error("payment submit failed");
+      result.classList.remove("is-warn");
+      result.classList.add("is-ok");
+      result.insertAdjacentHTML("beforeend", `<br><strong>付款资料已提交。</strong>${htmlEscape(ticketServiceNotice)}`);
+      if (paymentStep) paymentStep.classList.add("is-hidden");
+    } catch (error) {
+      result.classList.remove("is-ok");
+      result.classList.add("is-warn");
+      result.insertAdjacentHTML("beforeend", "<br>付款资料暂时提交失败，请核对订单是否过期、金额是否一致、流水号是否重复。");
+      submitPaymentButton.disabled = false;
+      submitPaymentButton.textContent = "提交付款资料";
+    }
   };
 
   passengersInput.addEventListener("input", renderPassengerForms);
@@ -3799,8 +3846,9 @@ if (trainTicketTool) {
     if (paymentStep) paymentStep.classList.remove("is-hidden");
     target.disabled = true;
     target.textContent = "已确认，继续填写付款资料";
-    result.insertAdjacentHTML("beforeend", "<br>已确认订单信息，请继续填写付款资料。");
+    result.insertAdjacentHTML("beforeend", `<br>已确认订单信息，请继续填写付款资料。${htmlEscape(ticketServiceNotice)}`);
   });
+  submitPaymentButton?.addEventListener("click", submitPaymentProof);
   renderStationSelects();
   renderPassengerForms();
 }
