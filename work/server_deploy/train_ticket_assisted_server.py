@@ -80,6 +80,23 @@ STATION_ALIASES = {
     "фергана": "Fergana",
 }
 
+STATION_SLUGS = {
+    "Almaty-1": "almaty",
+    "Almaty-2": "almaty",
+    "Almaty": "almaty",
+    "Astana": "astana",
+    "Shymkent": "shymkent",
+    "Turkistan": "turkestan",
+    "Tashkent": "tashkent",
+    "Samarkand": "samarkand",
+    "Bukhara": "buhara-1",
+    "Khiva": "hiva",
+    "Urgench": "urgench",
+    "Nukus": "nukus",
+    "Andijan": "andijan-1",
+    "Fergana": "fergana",
+}
+
 
 @dataclass
 class TrainOrder:
@@ -332,28 +349,117 @@ def build_seat_detail(seat: str, schedule_index: int, seat_index: int, passenger
     return "、".join(build_seat_details(seat, schedule_index, seat_index, passenger_count))
 
 
-def query_train_availability_browser(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    row_selector = os.getenv("TRAIN_TICKET_OFFER_ROW_SELECTOR", "").strip()
-    selector_map = {
-        "from": os.getenv("TRAIN_TICKET_FROM_SELECTOR", "").strip(),
-        "to": os.getenv("TRAIN_TICKET_TO_SELECTOR", "").strip(),
-        "date": os.getenv("TRAIN_TICKET_DATE_SELECTOR", "").strip(),
-        "search": os.getenv("TRAIN_TICKET_SEARCH_SELECTOR", "").strip(),
-        "row": row_selector,
-        "train": os.getenv("TRAIN_TICKET_OFFER_TRAIN_SELECTOR", "").strip(),
-        "depart": os.getenv("TRAIN_TICKET_OFFER_DEPART_SELECTOR", "").strip(),
-        "arrive": os.getenv("TRAIN_TICKET_OFFER_ARRIVE_SELECTOR", "").strip(),
-        "seat": os.getenv("TRAIN_TICKET_OFFER_SEAT_SELECTOR", "").strip(),
-        "seat_detail": os.getenv("TRAIN_TICKET_OFFER_SEAT_DETAIL_SELECTOR", "").strip(),
-        "left": os.getenv("TRAIN_TICKET_OFFER_LEFT_SELECTOR", "").strip(),
-        "duration": os.getenv("TRAIN_TICKET_OFFER_DURATION_SELECTOR", "").strip(),
-        "price": os.getenv("TRAIN_TICKET_OFFER_PRICE_SELECTOR", "").strip(),
-    }
-    if not all(selector_map[key] for key in ["from", "to", "date", "search", "row"]):
-        raise RuntimeError("Realtime train sync is not configured")
+def station_slug(station: str) -> str:
+    normalized = normalize_station(station)
+    slug = STATION_SLUGS.get(normalized)
+    if slug:
+        return slug
+    return re.sub(r"[^a-z0-9-]+", "-", normalized.lower()).strip("-")
 
+
+def format_ticket_date(value: str) -> str:
+    try:
+        parsed = datetime.strptime(str(value), "%Y-%m-%d")
+    except ValueError:
+        try:
+            parsed = datetime.strptime(str(value), "%d.%m.%Y")
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Invalid departure date") from exc
+    return parsed.strftime("%d.%m.%Y")
+
+
+def seat_preference_matches(preference: str, seat: str) -> bool:
+    if not preference or preference == "任意可出票座席":
+        return True
+    haystack = seat.lower()
+    if preference == "卧铺":
+        return "sleeper" in haystack or "sleep" in haystack
+    if "座席" in preference or "坐席" in preference or "二等座" in preference:
+        return "seat" in haystack or "seating" in haystack
+    if "包厢" in preference:
+        return "compartment" in haystack or "cabin" in haystack or "sleeper" in haystack
+    return preference.lower() in haystack
+
+
+def normalize_seat_label(label: str) -> str:
+    lowered = label.lower()
+    if "1st" in lowered and "sleeper" in lowered:
+        return "1st class sleeper（卧铺）"
+    if "2nd" in lowered and "sleeper" in lowered:
+        return "2nd class sleeper（卧铺）"
+    if "seating" in lowered:
+        return "Seating-only（座席）"
+    return label
+
+
+def parse_left_count(text: str, default: int) -> int:
+    match = re.search(r"(\d+)\s+seats?", text or "", re.I)
+    if match:
+        return int(match.group(1))
+    numbers = re.findall(r"\d+", text or "")
+    return int(numbers[0]) if numbers else default
+
+
+def extract_train_summary(row: Any) -> dict[str, str]:
+    train_no = read_locator_text(row, ".railway-train-services") or "可选车次"
+    duration = read_locator_text(row, ".railway-train-duration-time__duration_text")
+    time_nodes = row.locator(".railway-train-duration-time .font-600")
+    depart_time = time_nodes.nth(0).inner_text(timeout=3000).strip() if time_nodes.count() >= 1 else ""
+    arrive_time = time_nodes.nth(1).inner_text(timeout=3000).strip() if time_nodes.count() >= 2 else ""
+    return {
+        "train_no": train_no,
+        "depart_time": depart_time,
+        "arrive_time": arrive_time,
+        "duration": duration or format_duration(depart_time, arrive_time),
+    }
+
+
+def extract_visible_seats(page: Any, passenger_count: int, left: int) -> tuple[str, list[str]]:
+    car_buttons = page.locator(".railway-seats-rates-button button")
+    seats: list[str] = []
+    car_count = min(car_buttons.count(), 8)
+    if car_count <= 0:
+        car_count = 1
+
+    for car_index in range(car_count):
+        car_text = ""
+        car_left = left
+        if car_buttons.count() > 0:
+            car_button = car_buttons.nth(car_index)
+            car_text = car_button.inner_text(timeout=3000).strip().splitlines()[0]
+            car_left = parse_left_count(car_button.inner_text(timeout=3000), 0) or left
+            car_button.click()
+            page.wait_for_timeout(400)
+        seat_buttons = page.locator("button.seat-button")
+        car_seats: list[str] = []
+        for seat_index in range(min(seat_buttons.count(), 120)):
+            button = seat_buttons.nth(seat_index)
+            if button.get_attribute("disabled") is not None:
+                continue
+            class_name = (button.get_attribute("class") or "").lower()
+            aria_disabled = (button.get_attribute("aria-disabled") or "").lower()
+            if aria_disabled == "true" or any(token in class_name for token in ["disabled", "busy", "taken", "occupied", "unavailable"]):
+                continue
+            text = button.inner_text(timeout=3000).strip()
+            if re.fullmatch(r"\d{1,3}", text):
+                prefix = f"{car_text} " if car_text else ""
+                car_seats.append(f"{prefix}{text}".strip())
+        seats.extend(car_seats[:car_left])
+        if len(seats) >= max(passenger_count, left):
+            break
+
+    unique = list(dict.fromkeys(seats))[: max(passenger_count, min(left, 12))]
+    if not unique:
+        return "", []
+    return "、".join(unique[:passenger_count]), unique[:12]
+
+
+def query_train_availability_browser(payload: dict[str, Any]) -> list[dict[str, Any]]:
     from_query = normalize_station(payload["from_station"])
     to_query = normalize_station(payload["to_station"])
+    depart_date = format_ticket_date(str(payload["depart_date"]))
+    result_url = f"{BOOKING_URL}/search/results/forward/{station_slug(from_query)}/{station_slug(to_query)}/{depart_date}"
+
     default_currency = default_currency_for_departure(from_query, str(payload.get("train_country", "")))
     seat_preference = str(payload.get("seat_preference", "")).strip()
     passenger_count = parse_positive_int(payload.get("passengers"))
@@ -368,58 +474,74 @@ def query_train_availability_browser(payload: dict[str, Any]) -> list[dict[str, 
             headless=os.getenv("TRAIN_TICKET_HEADLESS", "true").lower() == "true",
             slow_mo=int(os.getenv("TRAIN_TICKET_SLOW_MO", "80")),
         )
-        context = browser.new_context(storage_state=os.getenv("TRAIN_TICKET_STORAGE_STATE") or None)
+        context = browser.new_context(
+            storage_state=os.getenv("TRAIN_TICKET_STORAGE_STATE") or None,
+            viewport={"width": 1440, "height": 1000},
+        )
         page = context.new_page()
-        page.goto(BOOKING_URL, wait_until="domcontentloaded", timeout=timeout_ms)
-        page.locator(selector_map["from"]).fill(from_query)
-        page.locator(selector_map["to"]).fill(to_query)
-        page.locator(selector_map["date"]).fill(str(payload["depart_date"]))
-        page.locator(selector_map["search"]).click()
-        page.wait_for_selector(selector_map["row"], timeout=timeout_ms)
-        rows = page.locator(selector_map["row"])
-        for index in range(min(rows.count(), max_offers)):
-            row = rows.nth(index)
-            row_text = row.inner_text(timeout=5000).strip()
-            price_text = read_locator_text(row, selector_map["price"]) or row_text
-            unit_price, currency = parse_price_text(price_text, default_currency)
-            if unit_price <= 0:
-                continue
-            seat = read_locator_text(row, selector_map["seat"]) or seat_preference or "可出票座席"
-            seat_detail = read_locator_text(row, selector_map["seat_detail"])
-            if seat_preference and seat_preference != "任意可出票座席" and seat_preference not in seat:
-                continue
-            left_text = read_locator_text(row, selector_map["left"]) or row_text
-            left_numbers = re.findall(r"\d+", left_text)
-            left = int(left_numbers[-1]) if left_numbers else passenger_count
-            if left < passenger_count:
-                continue
-            depart_time = read_locator_text(row, selector_map["depart"])
-            arrive_time = read_locator_text(row, selector_map["arrive"])
-            duration = format_duration(depart_time, arrive_time, read_locator_text(row, selector_map["duration"]))
-            train_no = read_locator_text(row, selector_map["train"]) or row_text.splitlines()[0][:40] or f"可选车次 {index + 1}"
-            ticket_total_local = round(unit_price * passenger_count, 2)
-            price = calculate_price(ticket_total_local, get_exchange_rate(currency))
-            seat_options = build_seat_details(seat, index, 0, max(left, passenger_count))
-            selected_seat_detail = seat_detail or "、".join(seat_options[:passenger_count])
-            offers.append(
-                {
-                    "train_no": train_no,
-                    "depart_time": depart_time,
-                    "arrive_time": arrive_time,
-                    "duration": duration,
-                    "time": " - ".join(item for item in [depart_time, arrive_time] if item) or "时间以系统同步为准",
-                    "seat": seat,
-                    "seat_detail": selected_seat_detail,
-                    "seat_options": seat_options,
-                    "left": left,
-                    "currency": currency,
-                    "ticket_total_local": ticket_total_local,
-                    "exchange_rate": get_exchange_rate(currency),
-                    "total_cny": price["subtotal_cny"],
-                    "live_synced": True,
-                    "synced_at": datetime.now(timezone.utc).isoformat(),
-                }
-            )
+        page.goto(result_url, wait_until="domcontentloaded", timeout=timeout_ms)
+        page.wait_for_function(
+            """() => [...document.querySelectorAll('.railway-train')]
+                .some((el) => /\\d{1,2}:\\d{2}/.test(el.innerText) && /seats?/i.test(el.innerText))""",
+            timeout=timeout_ms,
+        )
+        rows = page.locator(".railway-train", has_text=re.compile(r"\d{1,2}:\d{2}"))
+        for row_index in range(rows.count()):
+            row = rows.nth(row_index)
+            summary = extract_train_summary(row)
+            price_buttons = row.locator(".railway-train-prices-rates__price-button:visible")
+            for seat_index in range(price_buttons.count()):
+                if len(offers) >= max_offers:
+                    break
+                button = price_buttons.nth(seat_index)
+                price_text = button.inner_text(timeout=5000).strip()
+                lines = [line.strip() for line in price_text.splitlines() if line.strip()]
+                seat = normalize_seat_label(lines[0] if lines else seat_preference or "可出票座席")
+                if not seat_preference_matches(seat_preference, seat):
+                    continue
+                left = parse_left_count(price_text, passenger_count)
+                if left < passenger_count:
+                    continue
+                unit_price, currency = parse_price_text(price_text, default_currency)
+                if unit_price <= 0:
+                    continue
+                button.click()
+                page.wait_for_selector("button.seat-button", timeout=timeout_ms)
+                seat_detail, seat_options = extract_visible_seats(page, passenger_count, left)
+                page.go_back(wait_until="domcontentloaded", timeout=timeout_ms)
+                page.wait_for_function(
+                    """() => [...document.querySelectorAll('.railway-train')]
+                        .some((el) => /\\d{1,2}:\\d{2}/.test(el.innerText) && /seats?/i.test(el.innerText))""",
+                    timeout=timeout_ms,
+                )
+                rows = page.locator(".railway-train", has_text=re.compile(r"\d{1,2}:\d{2}"))
+                row = rows.nth(row_index)
+                if len(seat_options) < passenger_count:
+                    continue
+                ticket_total_local = round(unit_price * passenger_count, 2)
+                price = calculate_price(ticket_total_local, get_exchange_rate(currency))
+                offers.append(
+                    {
+                        "train_no": summary["train_no"],
+                        "depart_time": summary["depart_time"],
+                        "arrive_time": summary["arrive_time"],
+                        "duration": summary["duration"],
+                        "time": " - ".join(item for item in [summary["depart_time"], summary["arrive_time"]] if item)
+                        or "时间以系统同步为准",
+                        "seat": seat,
+                        "seat_detail": seat_detail or "座位号以系统同步为准",
+                        "seat_options": seat_options,
+                        "left": left,
+                        "currency": currency,
+                        "ticket_total_local": ticket_total_local,
+                        "exchange_rate": get_exchange_rate(currency),
+                        "total_cny": price["subtotal_cny"],
+                        "live_synced": True,
+                        "synced_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
+            if len(offers) >= max_offers:
+                break
         browser.close()
     return offers
 

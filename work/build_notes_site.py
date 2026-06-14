@@ -3310,32 +3310,10 @@ if (trainTicketTool) {
     return `${hours}小时${String(minutes).padStart(2, "0")}分钟`;
   };
 
-  const quoteTotalCny = (localTotal, rate) => {
-    const amount = Number(localTotal || 0) * Number(rate || 0) * 1.2;
-    return Number.isFinite(amount) && amount > 0 ? Number(amount.toFixed(2)) : 0;
-  };
-
   const splitSeatDetails = (value) => String(value || "")
     .split(/[、,，;；]/)
     .map((item) => item.trim())
     .filter(Boolean);
-
-  const buildSeatDetails = (seat, scheduleIndex, seatIndex, seatCount) => {
-    const count = Math.min(12, Math.max(1, Number(seatCount || 1)));
-    const carNo = String(3 + scheduleIndex + seatIndex).padStart(2, "0");
-    if (String(seat).includes("卧铺")) {
-      const berths = ["下铺", "中铺", "上铺", "下铺", "中铺", "上铺"];
-      return Array.from({ length: count }, (_, index) => `${carNo}车 ${12 + scheduleIndex * 3 + index}${berths[(index + seatIndex) % berths.length]}`);
-    }
-    if (String(seat).includes("包厢")) {
-      return Array.from({ length: count }, (_, index) => `${carNo}车 ${2 + scheduleIndex + index}号包厢`);
-    }
-    const letters = ["A", "B", "C", "D", "F"];
-    return Array.from({ length: count }, (_, index) => `${carNo}车 ${10 + scheduleIndex * 4 + Math.floor(index / letters.length)}${letters[(index + seatIndex) % letters.length]}`);
-  };
-
-  const buildSeatDetail = (seat, scheduleIndex, seatIndex, passengerCount) =>
-    buildSeatDetails(seat, scheduleIndex, seatIndex, passengerCount).join("、");
 
   const uzbekStations = ["塔什干", "撒马尔罕", "布哈拉", "希瓦", "乌尔根奇", "努库斯", "安集延", "费尔干纳"];
   const kazakhStations = [
@@ -3426,15 +3404,11 @@ if (trainTicketTool) {
     const passengerCount = Math.min(6, Math.max(1, Number(passengersInput.value || 1)));
     const seatLabel = offer.seat || offer.seat_type || offer.seat_class || seatInput.value || "可出票座席";
     const leftCount = Number(offer.left ?? offer.available_seats ?? offer.available ?? 0);
-    const availableCount = Math.min(12, Math.max(passengerCount, leftCount || passengerCount));
     let seatOptions = Array.isArray(offer.seat_options)
       ? offer.seat_options.map((item) => String(item || "").trim()).filter(Boolean)
       : splitSeatDetails(offer.seat_options || offer.available_seat_details || offer.available_seats_detail || offer.seat_detail_list);
     const rawSeatDetail = offer.seat_detail || offer.seat_no || offer.seat_number || offer.berth || "";
     if (!seatOptions.length) seatOptions = splitSeatDetails(rawSeatDetail);
-    if (seatOptions.length < Math.min(availableCount, 6)) {
-      seatOptions = buildSeatDetails(seatLabel, index, 0, availableCount);
-    }
     const selectedSeatDetails = seatOptions.slice(0, passengerCount);
     return {
       trainNo: offer.trainNo || offer.train_no || offer.train || `可选车次 ${index + 1}`,
@@ -3450,10 +3424,7 @@ if (trainTicketTool) {
       currency: String(offer.currency || offer.ticket_currency || "").toUpperCase(),
       total: Number(offer.total ?? offer.ticket_total_local ?? offer.price_total ?? offer.price ?? 0),
       rate: Number(offer.rate ?? offer.exchange_rate ?? 0),
-      totalCny: Number(offer.total_cny ?? offer.ticket_total_cny ?? offer.payable_preview_cny ?? quoteTotalCny(
-        Number(offer.total ?? offer.ticket_total_local ?? offer.price_total ?? offer.price ?? 0),
-        Number(offer.rate ?? offer.exchange_rate ?? 0)
-      )),
+      totalCny: Number(offer.total_cny ?? offer.ticket_total_cny ?? offer.payable_preview_cny ?? 0),
       liveSynced: offer.live_synced === true || offer.liveSynced === true,
       syncedAt: offer.synced_at || offer.syncedAt || "",
     };
@@ -3461,9 +3432,18 @@ if (trainTicketTool) {
 
   const renderOffers = (offers, emptyMessage = "") => {
     resetSelectedOffer();
+    const passengerCount = Math.min(6, Math.max(1, Number(passengersInput.value || 1)));
     currentOffers = offers
       .map(normalizeOffer)
-      .filter((offer) => offer.liveSynced && offer.left > 0 && offer.total > 0 && offer.rate > 0 && offer.currency);
+      .filter((offer) =>
+        offer.liveSynced &&
+        offer.left >= passengerCount &&
+        offer.total > 0 &&
+        offer.rate > 0 &&
+        offer.totalCny > 0 &&
+        offer.currency &&
+        offer.seatOptions.length >= passengerCount
+      );
     if (!currentOffers.length) {
       availabilityList.innerHTML = emptyMessage || "当前日期暂无可选座席，请返回修改日期或路线后重新查询；没有可选座席时不能进入下一步。";
       return;
