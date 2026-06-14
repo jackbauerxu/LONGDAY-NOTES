@@ -1,0 +1,14 @@
+[Unit]
+Description=Quiet Atlas Static Site Preview
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/quiet-atlas-site
+ExecStart=/usr/bin/python3 -m http.server 4173 --bind 0.0.0.0
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,21 @@
+﻿原表行号,来源,序号/名称,标题/名称,提取餐厅/地点名,Google候选名,Google候选详情/地址,Google纬度,Google经度,核验状态,备注,证据文件
+52,微信餐厅,湘聚缘·湘菜餐厅,湘聚缘·湘菜餐厅,湘聚缘·湘菜餐厅,湘聚缘,"高档餐饮·Tashkent, Temiryulchilar Str. 38",41.2836215,69.2796498,Google Maps已确认,同名结果；地址和坐标来自 Google Maps 读取页。,work/maps_reads/052_湘聚缘湘菜餐厅.md
+53,微信餐厅,漫漫重庆大碗麻辣烫,漫漫重庆大碗麻辣烫,漫漫重庆大碗麻辣烫,Kungfu Malatang,餐馆·Ulitsa Istiklol 7,41.3132606,69.2834973,Google候选需核名,候选与“漫漫重庆大碗麻辣烫”不是同名，只能作为近似麻辣烫候选。,work/maps_reads/053_漫漫重庆大碗麻辣烫.md
+54,微信餐厅,yusuf兰州拉面,yusuf兰州拉面,yusuf兰州拉面,兰州拉面,"中国风味·78M3+5WC, Фарғона Йўли",41.2829348,69.3047555,Google候选需核名,候选缺少 yusuf 字样，需核名。,work/maps_reads/054_yusuf兰州拉面.md
+55,微信餐厅,淮扬食府中餐厅,淮扬食府中餐厅,淮扬食府中餐厅,,,,,Google无同名结果,未返回“淮扬食府中餐厅”同名或高度相关候选。,work/maps_reads/055_淮扬食府中餐厅.md
+56,微信餐厅,LAGMAN HOUSE,LAGMAN HOUSE,LAGMAN HOUSE,,,,,Google无有效结果,页面未返回可用地点卡片。,work/maps_reads/056_LAGMAN_HOUSE.md
+57,微信餐厅,锅气火锅,锅气火锅,锅气火锅,重庆搞火锅Чунцинский самовар,中国风味·DOMDRABAD KO'CHASI,41.2568108,69.2043659,Google候选需核名,另有 JIANG HU HUOGUO 煮江湖火锅；与“锅气火锅”不完全同名。,work/maps_reads/057_锅气火锅.md
+58,微信餐厅,锅气小碗菜,锅气小碗菜,锅气小碗菜,,,,,Google无同名结果,返回多条泛化餐厅/火锅结果，未见“锅气小碗菜”同名候选。,work/maps_reads/058_锅气小碗菜.md
+59,微信餐厅,幸福小馆,幸福小馆,幸福小馆,,,,,Google无同名结果,返回泛化餐厅列表，未见“幸福小馆”同名候选。,work/maps_reads/059_幸福小馆.md
+60,微信餐厅,重庆辣德佳火锅,重庆辣德佳火锅,重庆辣德佳火锅,Xitoyning Chongqing Hotpoti,火锅·Arnasay ko'chasi 23,41.2752546,69.2245032,Google候选需核名,候选与“重庆辣德佳火锅”不是同名，只能作为重庆火锅近似候选。,work/maps_reads/060_重庆辣德佳火锅.md
+61,微信餐厅,闽浙海鲜餐厅,闽浙海鲜餐厅,闽浙海鲜餐厅,浙江海鲜楼,"中国风味·Arnasay Street, 斯坦",41.2799293,69.2267713,Google候选需核名,与“闽浙海鲜餐厅”接近但不是同名。,work/maps_reads/061_闽浙海鲜餐厅.md
+62,微信餐厅,塔什干遇湘食府,塔什干遇湘食府,塔什干遇湘食府,遇湘食府,"UZ Imam at-Termeziy ko'chasi 8, Тоshkent, Toshkent, 乌兹别克斯坦",41.2831119,69.2452873,Google Maps已确认,同名详情页；地址和坐标来自 Google Maps 读取页。,work/maps_reads/062_塔什干遇湘食府.md
+63,微信餐厅,樽龍私厨,樽龍私厨,樽龍私厨,,,,,Google无同名结果,未返回“樽龍私厨”同名或高度相关候选。,work/maps_reads/063_樽龍私厨.md
+64,微信餐厅,Saray新疆餐厅,Saray新疆餐厅,Saray新疆餐厅,saray uygur taomliri,中欧餐厅·furqat 15a,41.3096237,69.2430459,Google候选需核名,Saray+Uyghur 语义接近新疆餐厅，但不是中文同名。,work/maps_reads/064_Saray新疆餐厅.md
+65,微信餐厅,一站式火锅外卖,一站式火锅外卖,一站式火锅外卖,,,,,Google无同名结果,返回泛化餐厅/火锅结果，未见“一站式火锅外卖”同名候选。,work/maps_reads/065_一站式火锅外卖.md
+66,微信餐厅,樱花餐厅-延边烤肉店,樱花餐厅-延边烤肉店,樱花餐厅-延边烤肉店,Sakura BBQ,烧烤·Abdulla Kaxxar ko'chasi 48а,41.2753514,69.2633190,Google Maps已确认,Sakura 与樱花、BBQ 与烤肉对应，名称高度匹配。,work/maps_reads/066_樱花餐厅-延边烤肉店.md
+67,微信餐厅,渝味山庄江湖菜,渝味山庄江湖菜,渝味山庄江湖菜,,,,,Google无同名结果,未返回“渝味山庄江湖菜”同名候选。,work/maps_reads/067_渝味山庄江湖菜.md
+68,微信餐厅,重庆小面,重庆小面,重庆小面,China Arena Restaurant,中国风味；菜单主打餐饮：重庆小面,41.2863567,69.2716208,Google候选需核名,候选是菜单项匹配，不是店名同名。,work/maps_reads/068_重庆小面.md
+69,微信餐厅,华人餐厅,华人餐厅,华人餐厅,华人餐厅,中国风味·8728+Q2Q,41.3019603,69.2649157,Google Maps已确认,同名结果；坐标来自 Google Maps 读取页。,work/maps_reads/069_华人餐厅.md
+70,微信餐厅,疆来清真餐厅,疆来清真餐厅,疆来清真餐厅,疆来清真餐厅,"Tashkent, Mahmud Tarobiy ko'chasi, 100047",41.2863567,69.2591622,Google Maps已确认,同名详情页；地址和坐标来自 Google Maps 读取页。,work/maps_reads/070_疆来清真餐厅.md
+71,微信餐厅,中国饭店,中国饭店,中国饭店,中国饭店,中国风味·77VQ+7PJ,41.2932131,69.2892665,Google Maps已确认,同名结果；坐标来自 Google Maps 读取页。,work/maps_reads/071_中国饭店.md

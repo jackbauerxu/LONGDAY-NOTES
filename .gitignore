@@ -1,0 +1,35 @@
+.DS_Store
+
+# Python / Node caches
+__pycache__/
+*.py[cod]
+work/pycache/
+node_modules/
+
+# Local environment and runtime data
+.env
+*.env
+!.env.example
+!*.env.example
+train-ticket.env
+orders.json
+orders/
+proofs/
+uploads/
+data/orders.json
+data/proofs/
+
+# Generated site builds and deploy archives
+outputs/uzbek-notes-site/
+outputs/quiet-atlas-server-site/
+outputs/quiet-atlas-server-site-*/
+outputs/quiet-atlas-server-site-public-*/
+outputs/*.zip
+
+# Generated previews
+outputs/*.png
+outputs/*.html
+
+# Local editor files
+.idea/
+.vscode/

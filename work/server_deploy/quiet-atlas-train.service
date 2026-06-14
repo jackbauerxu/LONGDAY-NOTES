@@ -1,0 +1,15 @@
+[Unit]
+Description=Quiet Atlas Train Ticket API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/quiet-atlas-api
+EnvironmentFile=/opt/quiet-atlas-api/train-ticket.env
+ExecStart=/opt/quiet-atlas-api/venv/bin/uvicorn train_ticket_assisted_server:app --host 127.0.0.1 --port 8787
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

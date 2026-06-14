@@ -1,0 +1,8 @@
+﻿名称,用户补充地址,地图核验状态,地图名称/地址,坐标,备注,证据文件
+中乌长安美食城,"Geydar Aliyev koʻchasi, 189",已核验-地址详情,"Geydar Aliyev Street, 189, Tashkent","41.276910, 69.274203",Yandex 为具体门牌详情；楼内显示 Shaanxi Snacks 等商户，不是同名餐厅 POI,outputs/user_address_yandex_中乌长安美食城_geydar_aliyev_189.md
+长安巷·融合菜,"Tashkent, Katta Mirobod Street, 139",已核验-地址详情；已同步 final16 第 5 条,"Katta Mirabad Street, 139, Tashkent","41.288402, 69.267654",Yandex 为具体门牌详情；楼内显示 Marakand Palace，不是同名餐厅 POI,outputs/user_address_yandex_长安巷_katta_mirobod_139.md
+巴蜀印象,Abdulla Qahhor 49,已核验-地址详情,"Abdulla Qahhor Street, 49, Tashkent","41.277357, 69.263738",Yandex 为具体门牌详情；楼内显示 Atlet.uz、Mitesoro、VinTash 等商户，不是同名餐厅 POI,outputs/user_address_yandex_巴蜀印象_abdulla_qahhor_49.md
+川渝私房菜（东方明珠酒店）,"Hamal koʻchasi, 25/2",已核验-地址详情；已同步 final16 第 10 条,"Hamal Street, 25/2, Tashkent","41.284059, 69.302194",Yandex 为具体门牌详情；楼内显示 Vostok 酒店，未确认东方明珠酒店关系,outputs/user_address_yandex_川渝私房菜_hamal_street_25_2.md
+塔什干川蓉燚中餐厅,Small Ring Rd 16,已核验-地址详情,"Small Ring Road, 16, Tashkent","41.320287, 69.193471",Yandex 为具体门牌详情；楼内显示 Zoda Cheesecake Factory、Paul Branco、Casa Deco 等商户，不是同名餐厅 POI,outputs/user_address_yandex_川蓉燚_small_ring_16.md
+塔什干｜中餐｜四川酒店,"Ташкент, улица Шахжахан, 2А",已核验-地址详情；楼内有同名酒店 POI,"Shahjahan Street, 2A, Tashkent","41.285706, 69.248915",Yandex 门牌详情楼内显示 Sichuan Hotel / 四川饭店,outputs/user_address_yandex_四川酒店_shakhzhakhan_2a.md
+China Chuan Chuan,"Улица Мирабад, 9а / Mirabad Street, 9A",已核验-同名地点详情,"China Chuan Chuan, Tashkent, Mirabad Street, 9А","41.294387, 69.269155",地址来自用户截图；Yandex 为同名餐厅地点详情,outputs/user_address_yandex_china_chuan_chuan_mirabad_9a.md; /var/folders/m7/1dwxpyq514l6l3nh87pbfgdm0000gn/T/codex-clipboard-439131d1-57ec-4249-8417-625e02e6a700.png

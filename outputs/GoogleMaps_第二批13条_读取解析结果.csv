@@ -1,0 +1,14 @@
+﻿原表行号,来源,序号/名称,标题/名称,提取餐厅/地点名,Google候选名,Google候选详情/地址,Google纬度,Google经度,核验状态,备注,证据文件
+2,小红书,5,塔什干｜乌兹庭院民族风餐厅JIGARIM,JIGARIM,Jigarim restaurant,餐馆；Google Maps 详情页,41.2809066,69.2928924,Google Maps已确认,同名详情页；坐标来自第二批 Google Maps 读取页。,work/maps_reads_next/002_JIGARIM.md
+4,小红书,9,塔什干｜抓饭博物馆,plov museum,Plov Museum,餐馆；Google Maps 详情页,41.3315216,69.3124388,Google Maps已确认,同名/英文等价详情页；坐标来自第二批 Google Maps 读取页。,work/maps_reads_next/004_plov_museum.md
+5,小红书,10,塔什干｜印度菜 The host,The Host,The Host- Indian Restaurant,"Street Oybek 65/4, 100015, Тоshkent",41.2914696,69.2827894,Google Maps已确认,同名详情页；地址和坐标来自第二批 Google Maps 读取页。,work/maps_reads_next/005_The_Host.md
+6,小红书,12,塔什干｜Lali 高品质乌兹民族菜 都吃啥,Lali,Lali Restaurant,餐馆；Google Maps 详情页,41.3279321,69.2779741,Google Maps已确认,同名详情页；坐标来自第二批 Google Maps 读取页。,work/maps_reads_next/006_Lali.md
+23,小红书,110,塔什干 Dosan美女帅哥 云集的咖啡馆,Dosan,Cafe Dosan,"咖啡店·Tashkent City, Yakub Kolas Street 6",41.3039384,69.2704719,Google Maps已确认,同名咖啡馆；另有 Dosan 2 显示停业，采用第一条营业候选。,work/maps_reads_next/023_Dosan.md
+33,小红书,144,塔什干 miso拌饭,Miso,MISO. RESTAURANT,"68PR+9PJ, Tashkent, Tashkent Region",41.2359529,69.3417662,Google Maps已确认,同名详情页；坐标来自第二批 Google Maps 读取页。,work/maps_reads_next/033_Miso.md
+49,小红书,238,塔什干 首尔街boost cafe吃到他们停电,Boost Cafe,Boost Coffee,"76XW+8GP, Tashkent",,,Google有文字候选无坐标,同名/近名详情页有地址和 Plus Code，但本次页面未给出可换算坐标。,work/maps_reads_next/049_Boost_Cafe.md
+51,小红书,245,塔什干 奶茶🧋herotea,Hero Tea,Hero Tea,"Улица Баходира 69, Тоshkent",41.2991690,69.2472376,Google Maps已确认,同名详情页；地址和坐标来自第二批 Google Maps 读取页。,work/maps_reads_next/051_Hero_Tea.md
+83,微信餐厅,塔什干川蓉燚中餐厅,塔什干川蓉燚中餐厅,塔什干川蓉燚中餐厅,,,,,Google无有效结果,页面未返回可用地点卡片。,work/maps_reads_next/083_塔什干川蓉燚中餐厅.md
+90,微信餐厅,川湘食府,川湘食府,川湘食府,长安宴宾楼 | Shuan Hiang Shi Fu,"Sariko'l ko'chasi 2, 100005, Тоshkent",41.2793276,69.2852776,Google候选需核名,Shuan Hiang Shi Fu 与“川湘食府”疑似音译接近，但中文名不一致，需核名。,work/maps_reads_next/090_川湘食府.md
+98,微信餐厅,来福餐厅,来福餐厅,来福餐厅,,,,,Google无同名结果,返回泛化餐厅列表，未见“来福餐厅”同名候选。,work/maps_reads_next/098_来福餐厅.md
+102,微信餐厅,川渝私房菜（东方明珠酒店）,川渝私房菜（东方明珠酒店）,川渝私房菜（东方明珠酒店）,,,,,Google无同名结果,返回中餐/酒店泛化结果，未见“川渝私房菜（东方明珠酒店）”同名候选。,work/maps_reads_next/102_川渝私房菜（东方明珠酒店）.md
+108,微信餐厅,撒马尔罕新疆风味餐厅,撒马尔罕新疆风味餐厅,撒马尔罕新疆风味餐厅,,,,,Google无同名结果,返回 Tashkent 泛化餐厅列表，未见撒马尔罕新疆风味餐厅同名候选。,work/maps_reads_next/108_撒马尔罕新疆风味餐厅.md

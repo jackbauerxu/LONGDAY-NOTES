@@ -1,0 +1,213 @@
+# Google 地图
+> https://www.google.com/maps/search/Hero%20Tea%20Tashkent%20Uzbekistan%20restaurant
+
+[Column 1]
+[1]
+[2]
+
+
+
+
+保存
+附近
+发送到手机
+分享
+[3]
+
+已有 6 人报告
+
+[Column 2]
+[4]
+[5]
+
+
+[Column 3]
+[6]
+
+[7]
+> [8]
+
+[9]
+
+[Column 4]
+[10]
+[11]
+[12]
+
+[Column 5]
+[13]
+[14]
+[15]
+
+---
+https://www.instagram.com/ https://www.instagram.com › herotea_uz
+> 
+> 
+Hero Tea (@herotea_uz) · Tashkent - Instagram
+
+: Xitoy oshxonasi : 11:00 - 23:00 : Sog'ligingiz uchun ta'biy choylar.
+---
+
+
+已保存
+
+最近
+
+
+下载应用
+---
+https://www.feinfood.com/ https://www.feinfood.com › restaurant
+Hero Tea,: Feinfood.com,塔什干,乌兹别克斯坦
+Hero Tea,: 塔什干首尔街购物中心Seoul Mun二楼，奶茶和麻辣烫.
+4.6 (8)**·**UZS 5-10万
+咖啡店
+---
+Hero Tea
+---
+https://www.instagram.com/ https://www.instagram.com › reels
+Hero Tea (@herotea_uz) · Tashkent - Instagram
+1K+ followers · 99 posts · : Xitoy oshxonasi : 11:00 - 23:00 : Sog'ligingiz uchun ta'biy choylar.
+> 
+> 
+路线
+---
+概览 评价 简介
+---
+
+> Улица Баходира 69, Тоshkent, Toshkent, 乌兹别克斯坦
+正在营业 · 结束营业时间：00:00 
+每人 UZS 50,000-100,000
+ 76XW+MV 塔什干 乌兹别克斯坦
+ [16] 声明对此商家的所有权 [16]
+ 您的 Google 地图历史记录
+---
+ 添加标签
+---
+ 提出修改建议
+---
+添加缺失的信息 
+---
+ 添加地点的电话号码
+---
+ 添加网站
+---
+访客提供的更新内容
+---
+АұІыслғ
+1 年前
+---
+繁忙时段 星期六 
+
+---
+
+6时
+9时
+12时
+---
+15时
+---
+18时
+---
+21时
+---
+照片和视频
+全部
+餐饮
+视频
+氛围
+---
+ 添加照片和视频
+---
+评价摘要 
+---
+5
+> 4.6
+4
+3
+2
+> 8 条评价
+1
+---
+ 我要评价
+---
+评价
+
+ 排序
+---
+Z Z
+
+本地向导 · 715 条评价 · 2,884 张照片
+---
+ 3 个月前
+---
+首尔水街上唯二的中餐之一 过年间没有关门 有麻辣烫卖 潮汕老板儿开的 食客都是吃手抓饭烤包子吃伤了的自己人 三四十块钱一份麻辣烫还算实惠 加得有花生酱 味道就像方便面 还有奶茶卖 感觉老板儿人挺好的 需要打牙祭得可以考虑展开
+---
+ 赞  分享
+---
+hui miao
+
+本地向导 · 33 条评价 · 30 张照片
+---
+ 1 年前
+---
+麻辣烫特别好吃，汤底很香，肉肉也很多！ 点了无糖的珍珠奶茶，不甜，nice～
+
+**食物**：5…
+展开
+---
+ 赞  分享
+---
+Pingping Wang
+
+1 条评价 · 4 张照片
+---
+ 1 年前
+---
+在塔什干吃到了中餐简直太开心了！！！麻辣烫➕奶茶，拯救中国胃！！！强烈推荐！！
+
+**订单类型**
+堂食…
+展开
+---
+ 1 次点赞  分享
+---
+更多评价 (5)
+---
+用户还搜索了
+---
+Tea Horse Road
+> Coffee shop
+> Tchibo Coffee Corner YTIT (Ёджу)
+> Warumkaffee
+Tea Horse Road·5 (1)
+> 无评价
+> 4.5 (2)
+> Warumkaffee·4 (15)
+咖啡店
+> 咖啡店
+> 咖啡店
+> 咖啡摊
+---
+网页搜索结果
+---
+关于这些数据 [17]
+
+[1] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90746!3i48997!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[2] https://lh3.googleusercontent.com/gps-cs-s/APNQkAHi8I-jpkiCV806I61EYfuCd6YZabJWhuaFumf0raotNI3cJ-VqhdIs1eETabiL8kGXLwUet21xj-gJj0-r9YW3_3cG7AlFyF5a6Uk9k1aZI4no0CtoAlyIasQnkVQdt7rJB0YX=w312-h228-p-k-no
+[3] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90746!3i48998!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[4] https://www.google.com/maps/vt/data=bce4-2eEtywP79MK3J3L3QiHVCqGR6yLKFZwEkgOGfpcAlCI6iCyxeArlinQzJPXDCKIXn-rb34dxOrRw2jTYvBGH2-O-S2aAvS54YhBAuGfgXhJjTi6DYASPU4YudQGoaciBNZP33cUxiC4fMoAVaHkFN8zYjw4Gv2TPKI
+[5] https://lh3.googleusercontent.com/gps-cs-s/APNQkAHamlIzD0RIQNUtAM4L-ux6OIG1xdPkV6QDNspcBynCgEJw1gsooGMClAd7qgafrwonr1i9KhPybfa447VoJasq1c9r-h5dDquKeSpKjs3Sv6o04fsROjDBfs_125ySrT94_d-5=w312-h228-p-k-no
+[6] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90747!3i48996!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[7] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90747!3i48997!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[8] https://lh3.googleusercontent.com/gps-cs-s/APNQkAEYDBiqN_qWWBUKXLzPUnzLV9IMHEmiflpe8dzs_ir3P2xCbENcravHK4YDWQ8vmULLIea8ndAMQMKROo53P-Vk6E8LZTu94XqPJcsJcZV-IisqE20IW2ESz2PPB7bq8-fg_4m5=w312-h228-p-k-no
+[9] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90747!3i48998!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[10] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90748!3i48996!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[11] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90748!3i48997!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[12] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90748!3i48998!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[13] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90749!3i48996!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[14] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90749!3i48997!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[15] https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i90749!3i48998!2m3!1e0!2sm!3i782547556!2m2!1e2!2sspotlit!3m8!2szh-CN!3skz!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i1368782!23i1368785!23i4861626!23i10211310!23i1381938!23i47054629!23i47029525!23i72272233!23i72272234!23i72272236!23i10212276!23i94278263!23i72458815!23i10211069!23i94243289!23i94255677!23i72860224!23i10211515!23i94260020!23i100799651!23i72549439!27m14!299174093m13!14m12!1m8!1m2!1y4084354744768536421!2y5075129575148522804!2s%2Fg%2F11y9d0r5y_!4m2!1x412991690!2x692472376!15sgcid%3Acoffee_shop!2b0!6b0!8b0
+[16] https://business.google.com/create?fp=5075129575148522804&hl=zh-CN&authuser=0&gmbsrc=kz-zh-cn-et-ip-z-gmb-s-z-l~mrc%7Cclaimbz%7Cu&ppsrc=GMBMI&utm_campaign=kz-zh-cn-et-ip-z-gmb-s-z-l~mrc%7Cclaimbz%7Cu&utm_source=gmb_mrc81&utm_medium=et&getstarted&lis=1
+[17] https://support.google.com/local-listings?p=how_google_sources&authuser=0&hl=zh-CN
+
+Session: 324191107609165825 (use --session-id to continue)

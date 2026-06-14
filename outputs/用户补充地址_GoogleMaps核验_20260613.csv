@@ -1,0 +1,9 @@
+﻿用户给的名称,用户给的地址,Google候选名,Google候选详情/地址,Google纬度,Google经度,核验状态,备注,证据文件
+Lesnoy,"Istiqbol street, 45",Lesnoy,咖啡馆·Istiqbol ko'chasi 45,41.3031212,69.2898053,已确认；更新已有确认坐标,"对应当前已确认表的小红书 seq62 Lesnoy森林；原坐标为 41.3023180,69.2893150。",work/maps_user_addresses/Lesnoy.md
+ORA,"Tashkent, Istiqbol street, 41, floor 2",ORA,"餐馆·ЖК Инфинити, Ташкент, улица Истикбол, этаж 2 41",41.3022999,69.2891848,已确认；未匹配当前总表源记录,Google Maps 同名结果明确，但当前 228 条总池未检出 ORA 源记录。,work/maps_user_addresses/ORA.md
+COCOCHOU BAKERY,"Ташкент, ул. Мирабад, 39",COCOCHOU BAKERY,"Mirobod ko'chasi 39, 100015, Тоshkent",41.2928277,69.2717089,已确认；匹配当前待查 seq54/seq81,用户地址与 Google Maps 同名详情页一致。,work/maps_user_addresses/COCOCHOU_BAKERY.md
+muza kitchen,"Tashkent, Yashnabad City District, Mahtumquli Street, 45",Muza Kitchen,"Makhtumkuli 45 / 876M+Q2H, Tashkent",41.3118078,69.2826143,已确认；未匹配当前总表源记录,Google Maps 同名结果明确，但当前 228 条总池未检出 muza kitchen 源记录。,work/maps_user_addresses/muza_kitchen.md
+煮江湖重庆火锅,"Арнасай, 16Б",JIANG HU HUOGUO 煮江湖火锅,76HG+GM 塔什干；电话 +998 94 999 57 66,41.2788045,69.2266345,已确认；更新已有确认坐标,"对应当前已确认表的微信“塔什干煮江湖火锅餐厅”；原坐标为 41.3494374,69.2260522。",work/maps_user_addresses/JIANG_HU_HUOGUO.md
+湘味小厨,"ул. Кичик Бешагач, 128",湘味小厨,Кичик Бешагач161 塔什干市,41.2799943,69.2695387,已确认；未匹配当前总表源记录,Google Maps 同名结果明确，但门牌显示 161，与用户给的 128 不一致，需保留地址差异备注。,work/maps_user_addresses/湘味小厨.md
+Caravan,"112 Abdurahman Jami Street, Tashkent, Uzbekistan",Restaurant Caravan,Abdulla Kaxxar ko'chasi 22,41.2851722,69.2575792,地址冲突需核,Google Maps 返回餐厅地址与用户给的 Abdurahman Jami 112 不一致，不计入确认。,work/maps_user_addresses/Caravan.md
+OKO,"152/1, Buyuk Ipak Yuli Road, 100000, Tashkent",Oko,"152/1, Buyuk Ipak Yuli Road, 100000, Tashkent",41.3270300,69.3375740,已确认；匹配当前待查 seq105,用户地址与 Google Maps 同名详情页一致。,work/maps_user_addresses/OKO.md
