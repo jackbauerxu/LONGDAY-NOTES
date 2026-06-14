@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import os
 import random
@@ -731,7 +732,12 @@ def payment_notification_body(order: TrainOrder) -> str:
 
 def build_payment_notification(order: TrainOrder) -> EmailMessage:
     recipient = os.getenv("TRAIN_TICKET_NOTIFY_EMAIL", "bldderblack@gmail.com")
-    sender = os.getenv("TRAIN_TICKET_SMTP_FROM") or os.getenv("TRAIN_TICKET_SMTP_USER") or "quiet-atlas@localhost"
+    sender = (
+        os.getenv("TRAIN_TICKET_RESEND_FROM")
+        or os.getenv("TRAIN_TICKET_SMTP_FROM")
+        or os.getenv("TRAIN_TICKET_SMTP_USER")
+        or "Quiet Atlas <onboarding@resend.dev>"
+    )
     message = EmailMessage()
     message["Subject"] = f"火车票付款成功：{order.order_id}"
     message["From"] = sender
@@ -755,15 +761,64 @@ def save_notification_outbox(message: EmailMessage, order_id: str) -> Path:
     return outbox_path
 
 
+def send_notification_resend(order: TrainOrder, message: EmailMessage) -> str | None:
+    api_key = os.getenv("TRAIN_TICKET_RESEND_API_KEY", "").strip()
+    if not api_key:
+        return None
+    attachments = []
+    proof_path = Path(order.proof_path)
+    if proof_path.exists():
+        attachments.append(
+            {
+                "filename": proof_path.name,
+                "content": base64.b64encode(proof_path.read_bytes()).decode("ascii"),
+            }
+        )
+    payload = {
+        "from": message["From"],
+        "to": [message["To"]],
+        "subject": message["Subject"],
+        "text": payment_notification_body(order),
+    }
+    if attachments:
+        payload["attachments"] = attachments
+    request = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=20) as response:
+        body = json.loads(response.read().decode("utf-8") or "{}")
+    return str(body.get("id") or "sent")
+
+
 def send_payment_notification(order_id: str) -> None:
     with _lock:
         orders = load_orders()
         order = require_order(orders, order_id)
         message = build_payment_notification(order)
         outbox_path = save_notification_outbox(message, order_id)
+        try:
+            resend_id = send_notification_resend(order, message)
+        except Exception as exc:
+            resend_id = None
+            resend_error = str(exc)
+        else:
+            resend_error = ""
+        if resend_id:
+            append_history(order, f"payment notification sent by resend: {resend_id}")
+            save_orders(orders)
+            return
         smtp_host = os.getenv("TRAIN_TICKET_SMTP_HOST", "").strip()
         if not smtp_host:
-            append_history(order, f"payment notification saved: {outbox_path}")
+            note = f"payment notification saved: {outbox_path}"
+            if resend_error:
+                note += f"; resend error: {resend_error}"
+            append_history(order, note)
             save_orders(orders)
             return
         smtp_port = int(os.getenv("TRAIN_TICKET_SMTP_PORT", "587"))
