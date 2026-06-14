@@ -6,6 +6,7 @@ import random
 import re
 import threading
 import time
+import urllib.request
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -33,6 +34,7 @@ DEFAULT_EXCHANGE_RATES = {
     "KZT": float(os.getenv("TRAIN_TICKET_RATE_KZT", "0.0145")),
     "UZS": float(os.getenv("TRAIN_TICKET_RATE_UZS", "0.000564")),
 }
+_rate_cache: dict[str, tuple[float, float]] = {}
 
 STATION_ALIASES = {
     "阿拉木图-1": "Almaty-1",
@@ -228,11 +230,33 @@ def parse_client_time(value: str) -> datetime:
         raise HTTPException(status_code=400, detail="Invalid payment time") from exc
 
 
+def fetch_live_exchange_rate(currency: str) -> float | None:
+    currency = currency.upper()
+    if currency == "CNY":
+        return 1.0
+    now = time.time()
+    cached = _rate_cache.get(currency)
+    if cached and now - cached[0] < 1800:
+        return cached[1]
+    url = f"https://api.frankfurter.app/latest?from={currency}&to=CNY"
+    try:
+        with urllib.request.urlopen(url, timeout=6) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+            rate = float(payload.get("rates", {}).get("CNY", 0))
+    except Exception:
+        return None
+    if rate <= 0:
+        return None
+    _rate_cache[currency] = (now, rate)
+    return rate
+
+
 def get_exchange_rate(currency: str, explicit_rate: Any = None) -> float:
     if explicit_rate not in (None, ""):
         rate = float(explicit_rate)
     else:
-        rate = DEFAULT_EXCHANGE_RATES.get(currency.upper(), 1.0)
+        normalized_currency = currency.upper()
+        rate = fetch_live_exchange_rate(normalized_currency) or DEFAULT_EXCHANGE_RATES.get(normalized_currency, 1.0)
     if rate <= 0:
         raise HTTPException(status_code=400, detail="Exchange rate must be greater than 0")
     return rate
@@ -249,6 +273,21 @@ def calculate_price(ticket_total_local: float, exchange_rate: float) -> dict[str
         "service_fee_cny": round(service_fee_cny, 2),
         "subtotal_cny": round(subtotal_cny, 2),
     }
+
+
+def zh_duration(value: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    match = re.fullmatch(r"(\d+)\s*h(?:ours?)?\s*(\d+)?\s*m(?:in(?:utes?)?)?", text, re.I)
+    if match:
+        hours = int(match.group(1))
+        minutes = int(match.group(2) or 0)
+        return f"{hours}小时{minutes:02d}分钟"
+    match = re.fullmatch(r"(\d+)\s*h(?:ours?)?", text, re.I)
+    if match:
+        return f"{int(match.group(1))}小时"
+    return text
 
 
 def parse_positive_int(value: Any, default: int = 1) -> int:
@@ -280,7 +319,7 @@ def parse_time_minutes(value: str) -> int | None:
 
 def format_duration(depart_time: str, arrive_time: str, fallback: str = "") -> str:
     if fallback:
-        return fallback
+        return zh_duration(fallback)
     depart_minutes = parse_time_minutes(depart_time)
     arrive_minutes = parse_time_minutes(arrive_time)
     if depart_minutes is None or arrive_minutes is None:
@@ -384,12 +423,31 @@ def seat_preference_matches(preference: str, seat: str) -> bool:
 def normalize_seat_label(label: str) -> str:
     lowered = label.lower()
     if "1st" in lowered and "sleeper" in lowered:
-        return "1st class sleeper（卧铺）"
+        return "一等卧铺"
     if "2nd" in lowered and "sleeper" in lowered:
-        return "2nd class sleeper（卧铺）"
+        return "二等卧铺"
     if "seating" in lowered:
-        return "Seating-only（座席）"
+        return "座席"
+    if re.fullmatch(r"\d+\s+seats?", label.strip(), re.I):
+        return "座席"
     return label
+
+
+def normalize_seat_detail(value: str, seat_label: str = "") -> str:
+    text = re.sub(r"\s+", " ", str(value or "").replace("\xa0", " ")).strip()
+    if not text:
+        return ""
+    text = re.sub(r"\bSeat\s+(\d+)\b", r"\1号座位", text, flags=re.I)
+    text = re.sub(r"\bSleep\s+(\d+)\b", lambda m: f"{m.group(1)}号{'下铺' if int(m.group(1)) % 2 else '上铺'}", text, flags=re.I)
+    text = re.sub(r"\bSleeper\s+(\d+)\b", lambda m: f"{m.group(1)}号{'下铺' if int(m.group(1)) % 2 else '上铺'}", text, flags=re.I)
+    text = re.sub(r"\bUpper\b", "上铺", text, flags=re.I)
+    text = re.sub(r"\bLower\b", "下铺", text, flags=re.I)
+    text = re.sub(r"\bVIP\s+(\d+)\b", r"VIP \1号铺位", text, flags=re.I)
+    text = re.sub(r"^(\d+)\s+(?=\d+号|VIP)", r"\1车 ", text)
+    if "卧铺" in seat_label and re.fullmatch(r"\d+车 \d+号", text):
+        number = int(re.search(r"(\d+)号", text).group(1))
+        text = f"{text}{'下铺' if number % 2 else '上铺'}"
+    return text
 
 
 def parse_left_count(text: str, default: int) -> int:
@@ -507,7 +565,10 @@ def query_train_availability_browser(payload: dict[str, Any]) -> list[dict[str, 
                     continue
                 button.click()
                 page.wait_for_selector("button.seat-button", timeout=timeout_ms)
-                seat_detail, seat_options = extract_visible_seats(page, passenger_count, left)
+                raw_seat_detail, raw_seat_options = extract_visible_seats(page, passenger_count, left)
+                seat_options = [normalize_seat_detail(item, seat) for item in raw_seat_options]
+                seat_options = [item for item in seat_options if item]
+                seat_detail = "、".join(seat_options[:passenger_count])
                 page.go_back(wait_until="domcontentloaded", timeout=timeout_ms)
                 page.wait_for_function(
                     """() => [...document.querySelectorAll('.railway-train')]
@@ -525,7 +586,7 @@ def query_train_availability_browser(payload: dict[str, Any]) -> list[dict[str, 
                         "train_no": summary["train_no"],
                         "depart_time": summary["depart_time"],
                         "arrive_time": summary["arrive_time"],
-                        "duration": summary["duration"],
+                        "duration": zh_duration(summary["duration"]),
                         "time": " - ".join(item for item in [summary["depart_time"], summary["arrive_time"]] if item)
                         or "时间以系统同步为准",
                         "seat": seat,

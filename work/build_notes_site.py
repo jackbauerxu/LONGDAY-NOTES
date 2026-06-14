@@ -1381,9 +1381,9 @@ def page_shell(config: dict[str, Any], title: str, body: str, description: str =
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{desc}">
     <title>{html.escape(title)} - {site_name}</title>
-    <link rel="stylesheet" href="{site_url('/assets/styles.css')}?v=20260614-basepath">
-    <script src="{site_url('/tools/runtime-config.js')}?v=20260614-basepath"></script>
-    <script defer src="{site_url('/assets/site.js')}?v=20260614-basepath"></script>
+    <link rel="stylesheet" href="{site_url('/assets/styles.css')}?v=20260614-train-fix">
+    <script src="{site_url('/tools/runtime-config.js')}?v=20260614-train-fix"></script>
+    <script defer src="{site_url('/assets/site.js')}?v=20260614-train-fix"></script>
   </head>
   <body>
     <header class="site-header">
@@ -3308,6 +3308,49 @@ if (trainTicketTool) {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
+  const formatSyncTime = (value) => {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return formatDateTime(date);
+  };
+
+  const translateDuration = (value) => {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    const match = text.match(/^(\d+)\s*h(?:ours?)?\s*(\d+)?\s*m(?:in(?:utes?)?)?$/i);
+    if (match) return `${Number(match[1])}小时${String(Number(match[2] || 0)).padStart(2, "0")}分钟`;
+    const hourOnly = text.match(/^(\d+)\s*h(?:ours?)?$/i);
+    if (hourOnly) return `${Number(hourOnly[1])}小时`;
+    return text;
+  };
+
+  const translateSeatText = (value, seatLabel = "") => {
+    let text = String(value || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+    if (!text) return "";
+    text = text
+      .replace(/\bSeat\s+(\d+)\b/gi, "$1号座位")
+      .replace(/\bVIP\s+(\d+)\b/gi, "VIP $1号铺位")
+      .replace(/\bUpper\b/gi, "上铺")
+      .replace(/\bLower\b/gi, "下铺");
+    text = text.replace(/\bSleep(?:er)?\s+(\d+)\b/gi, (_, n) => `${n}号${Number(n) % 2 ? "下铺" : "上铺"}`);
+    text = text.replace(/^(\d+)\s+(?=\d+号|VIP)/, "$1车 ");
+    if (seatLabel.includes("卧铺") && /^\d+车 \d+号$/.test(text)) {
+      const number = Number(text.match(/(\d+)号/)?.[1] || 0);
+      if (number) text += number % 2 ? "下铺" : "上铺";
+    }
+    return text;
+  };
+
+  const translateSeatLabel = (value) => {
+    const text = String(value || "").trim();
+    const lowered = text.toLowerCase();
+    if (lowered.includes("1st") && lowered.includes("sleeper")) return "一等卧铺";
+    if (lowered.includes("2nd") && lowered.includes("sleeper")) return "二等卧铺";
+    if (lowered.includes("seating") || /^\d+\s+seats?$/.test(lowered)) return "座席";
+    return text;
+  };
+
   const timeToMinutes = (value) => {
     const match = String(value || "").match(/(\d{1,2})[:：](\d{2})/);
     if (!match) return null;
@@ -3415,15 +3458,16 @@ if (trainTicketTool) {
   const normalizeOffer = (offer, index) => {
     const departTime = offer.depart_time || offer.departure_time || "";
     const arriveTime = offer.arrive_time || offer.arrival_time || "";
-    const duration = formatDuration(departTime, arriveTime, offer.duration || offer.duration_text || offer.runtime || "");
+    const duration = translateDuration(formatDuration(departTime, arriveTime, offer.duration || offer.duration_text || offer.runtime || ""));
     const time = offer.time || [departTime, arriveTime].filter(Boolean).join(" - ") || "时间以系统同步为准";
     const passengerCount = Math.min(6, Math.max(1, Number(passengersInput.value || 1)));
-    const seatLabel = offer.seat || offer.seat_type || offer.seat_class || seatInput.value || "可出票座席";
+    const seatLabel = translateSeatLabel(offer.seat || offer.seat_type || offer.seat_class || seatInput.value || "可出票座席");
     const leftCount = Number(offer.left ?? offer.available_seats ?? offer.available ?? 0);
     let seatOptions = Array.isArray(offer.seat_options)
-      ? offer.seat_options.map((item) => String(item || "").trim()).filter(Boolean)
+      ? offer.seat_options.map((item) => translateSeatText(item, seatLabel)).filter(Boolean)
       : splitSeatDetails(offer.seat_options || offer.available_seat_details || offer.available_seats_detail || offer.seat_detail_list);
-    const rawSeatDetail = offer.seat_detail || offer.seat_no || offer.seat_number || offer.berth || "";
+    seatOptions = seatOptions.map((item) => translateSeatText(item, seatLabel)).filter(Boolean);
+    const rawSeatDetail = translateSeatText(offer.seat_detail || offer.seat_no || offer.seat_number || offer.berth || "", seatLabel);
     if (!seatOptions.length) seatOptions = splitSeatDetails(rawSeatDetail);
     const selectedSeatDetails = seatOptions.slice(0, passengerCount);
     return {
@@ -3442,7 +3486,7 @@ if (trainTicketTool) {
       rate: Number(offer.rate ?? offer.exchange_rate ?? 0),
       totalCny: Number(offer.total_cny ?? offer.ticket_total_cny ?? offer.payable_preview_cny ?? 0),
       liveSynced: offer.live_synced === true || offer.liveSynced === true,
-      syncedAt: offer.synced_at || offer.syncedAt || "",
+      syncedAt: formatSyncTime(offer.synced_at || offer.syncedAt || ""),
     };
   };
 
