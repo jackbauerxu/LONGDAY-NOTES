@@ -14,6 +14,7 @@ ROOT = Path("/Users/g90/Documents/Codex/2026-06-13/hermes")
 SOURCE_DIR = ROOT / "outputs" / "小红书已完成专题"
 SITE_DIR = ROOT / "outputs" / "uzbek-notes-site"
 CONFIG_PATH = SITE_DIR / "tools" / "site.config.json"
+SITE_BASE_PATH = "/quiet-atlas"
 DINING_SOURCE = ROOT / "outputs" / "GoogleMaps_110条_整理标注总表.csv"
 OTHER_AUTHOR_SOURCE = ROOT / "outputs" / "final16_继续读取_处理结果.csv"
 USER_ADDRESS_SOURCE = ROOT / "outputs" / "用户补充地址_地图核验.csv"
@@ -1228,7 +1229,22 @@ def topic_markdown_path(topic: Topic) -> Path:
 
 
 def topic_url(topic: Topic) -> str:
-    return f"/countries/{topic.country_slug}/topics/{topic.slug}/"
+    return site_url(f"/countries/{topic.country_slug}/topics/{topic.slug}/")
+
+
+def site_url(path: str) -> str:
+    if not path:
+        return SITE_BASE_PATH or "/"
+    if re.match(r"^[a-z]+://", path):
+        return path
+    if path.startswith("#"):
+        base = SITE_BASE_PATH.rstrip("/")
+        return f"{base}/{path}" if base else f"/{path}"
+    normalized = path if path.startswith("/") else f"/{path}"
+    base = SITE_BASE_PATH.rstrip("/")
+    if not base:
+        return normalized
+    return f"{base}{normalized}"
 
 
 def read_topic(topic: Topic) -> str:
@@ -1365,17 +1381,17 @@ def page_shell(config: dict[str, Any], title: str, body: str, description: str =
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{desc}">
     <title>{html.escape(title)} - {site_name}</title>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260614-sim-compare">
-    <script src="/tools/runtime-config.js?v=20260614-deploy"></script>
-    <script defer src="/assets/site.js?v=20260614-deploy"></script>
+    <link rel="stylesheet" href="{site_url('/assets/styles.css')}?v=20260614-basepath">
+    <script src="{site_url('/tools/runtime-config.js')}?v=20260614-basepath"></script>
+    <script defer src="{site_url('/assets/site.js')}?v=20260614-basepath"></script>
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="/"><span>{site_name}</span><small>{site_name_en}</small></a>
+      <a class="brand" href="{site_url('/')}"><span>{site_name}</span><small>{site_name_en}</small></a>
       <nav aria-label="主导航">
-        <a href="/#countries">国家</a>
-        <a href="/#topics">专题</a>
-        <a href="/dining/">探店</a>
+        <a href="{site_url('/#countries')}">国家</a>
+        <a href="{site_url('/#topics')}">专题</a>
+        <a href="{site_url('/dining/')}">探店</a>
       </nav>
     </header>
     {body}
@@ -1396,7 +1412,7 @@ def topic_card(topic: Topic) -> str:
 
 def dining_topic_card(country: Country) -> str:
     return f"""
-      <a class="topic-card" href="/countries/{country.slug}/dining/" data-search-card>
+      <a class="topic-card" href="{site_url(f'/countries/{country.slug}/dining/')}" data-search-card>
         <span class="topic-meta">探店 · {html.escape(country.name)}</span>
         <strong>{html.escape(country.name)}探店</strong>
         <p>餐厅、咖啡馆、本地菜地点、地址坐标、作者信息和原帖来源。</p>
@@ -1408,7 +1424,7 @@ def country_card(country: Country) -> str:
     status_text = "已上线" if country.status == "online" else "预留"
     if country.status == "online":
         return f"""
-          <a class="country-card active" href="/countries/{country.slug}/">
+          <a class="country-card active" href="{site_url(f'/countries/{country.slug}/')}">
             <span>{status_text}</span>
             <strong>{html.escape(country.name)}</strong>
             <p>{html.escape(country.summary)}</p>
@@ -1552,7 +1568,7 @@ def render_home(
     online_countries = [country for country in countries if country.status == "online"]
     first_country = online_countries[0] if online_countries else None
     country_cards = "\n".join(country_card(country) for country in online_countries)
-    first_country_link = f"/countries/{first_country.slug}/" if first_country else "#countries"
+    first_country_link = site_url(f"/countries/{first_country.slug}/") if first_country else site_url("/#countries")
     first_country_name = first_country.name if first_country else "国家资料库"
     body = f"""
     <main>
@@ -1622,13 +1638,13 @@ def render_country_page(
             <p class="section-kicker">All topics</p>
             <h2>专题索引</h2>
           </div>
-          <a class="text-link" href="/">返回首页</a>
+          <a class="text-link" href="{site_url('/')}">返回首页</a>
         </div>
         <div class="topic-grid">{cards}</div>
       </section>
     </main>
     <footer class="site-footer">
-      <a class="footer-link" href="/countries/{country.slug}/">{html.escape(country.name)}</a>
+      <a class="footer-link" href="{site_url(f'/countries/{country.slug}/')}">{html.escape(country.name)}</a>
       <span>{len(country_topics)} 个专题</span>
     </footer>
 """
@@ -1698,7 +1714,7 @@ def dining_index_card(country: Country, places: list[DiningPlace]) -> str:
     confirmed_count = sum(1 for place in places if place.status == "已确认详细坐标")
     pending_count = len(places) - confirmed_count
     return f"""
-      <a class="topic-card" href="/countries/{country.slug}/dining/" data-search-card>
+      <a class="topic-card" href="{site_url(f'/countries/{country.slug}/dining/')}" data-search-card>
         <span class="topic-meta">探店 · {html.escape(country.name)}</span>
         <strong>{html.escape(country.name)}探店</strong>
         <p>地点 {len(places)} 条，已确认坐标 {confirmed_count} 条，待继续核验 {pending_count} 条。</p>
@@ -1739,7 +1755,7 @@ def render_dining_index_page(
 
 
 def tool_detail_url(topic: Topic, tool_slug: str) -> str:
-    return f"/countries/{topic.country_slug}/topics/{topic.slug}/{tool_slug}/"
+    return site_url(f"/countries/{topic.country_slug}/topics/{topic.slug}/{tool_slug}/")
 
 
 def render_local_tools_index(topic: Topic) -> str:
@@ -2075,7 +2091,7 @@ def render_topic_page(
     <main>
       <article class="article-shell">
         <aside class="article-side">
-          <a class="back-link" href="/countries/{topic.country_slug}/">返回 {html.escape(country_name)}</a>
+          <a class="back-link" href="{site_url(f'/countries/{topic.country_slug}/')}">返回 {html.escape(country_name)}</a>
           <span>{html.escape(topic.category)}</span>
           <h1>{html.escape(topic.title)}</h1>
           <p>{html.escape(topic.summary)}</p>
@@ -2123,7 +2139,7 @@ def render_local_tool_detail_page(
     <main>
       <article class="article-shell">
         <aside class="article-side">
-          <a class="back-link" href="/countries/{topic.country_slug}/topics/{topic.slug}/">返回工具合集</a>
+          <a class="back-link" href="{site_url(f'/countries/{topic.country_slug}/topics/{topic.slug}/')}">返回工具合集</a>
           <span>{html.escape(tool["meta"])}</span>
           <h1>{html.escape(tool["title"])}</h1>
           <p>{html.escape(tool["summary"])}</p>
@@ -4112,7 +4128,7 @@ window.QUIET_ATLAS_API_BASE = "https://你的-api-地址";
 
 def write_support_files() -> None:
     (SITE_DIR / "tools" / "runtime-config.js").write_text(
-        """window.QUIET_ATLAS_API_BASE = window.QUIET_ATLAS_API_BASE || "";
+        """window.QUIET_ATLAS_API_BASE = window.QUIET_ATLAS_API_BASE || "/quiet-atlas-api";
 """,
         encoding="utf-8",
     )
@@ -4121,13 +4137,13 @@ def write_support_files() -> None:
         public_server_script.unlink()
     (SITE_DIR / "robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")
     (SITE_DIR / "404.html").write_text(
-        """<!doctype html>
+        f"""<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>页面不存在 - 长日记事</title>
-    <link rel="stylesheet" href="/assets/styles.css">
+    <link rel="stylesheet" href="{site_url('/assets/styles.css')}">
   </head>
   <body>
     <main>
@@ -4135,7 +4151,7 @@ def write_support_files() -> None:
         <p class="eyebrow">404</p>
         <h1>页面不存在</h1>
         <p class="lead">这个地址暂时没有内容。可以返回首页查看国家资料库和已完成专题。</p>
-        <div class="hero-actions"><a class="button primary" href="/">返回首页</a></div>
+        <div class="hero-actions"><a class="button primary" href="{site_url('/')}">返回首页</a></div>
       </section>
     </main>
   </body>
