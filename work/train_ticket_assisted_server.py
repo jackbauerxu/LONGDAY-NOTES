@@ -4,11 +4,13 @@ import json
 import os
 import random
 import re
+import smtplib
 import threading
 import time
 import urllib.request
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
+from email.message import EmailMessage
 from pathlib import Path
 from typing import Any
 
@@ -25,8 +27,10 @@ APP_DIR = Path(os.getenv("TRAIN_TICKET_APP_DIR", Path(__file__).resolve().parent
 DATA_DIR = Path(os.getenv("TRAIN_TICKET_DATA_DIR", APP_DIR / "data"))
 DATA_PATH = Path(os.getenv("TRAIN_TICKET_ORDERS_PATH", DATA_DIR / "train_ticket_orders.json"))
 PROOF_DIR = Path(os.getenv("TRAIN_TICKET_PROOF_DIR", DATA_DIR / "payment_proofs"))
+EMAIL_OUTBOX_DIR = Path(os.getenv("TRAIN_TICKET_EMAIL_OUTBOX_DIR", DATA_DIR / "email_outbox"))
 ORDER_TTL_MINUTES = 20
 BOOKING_URL = "https://tickets.kz/en/gd"
+PAYMENT_SUCCESS_NOTICE = "付款成功后 3 小时内出票；如最终无票，100%退款。建议最好提前 1 到 2 天订票。"
 EXCHANGE_MARKUP_RATE = 0.03
 TOTAL_FEE_RATE = 0.20
 SERVICE_FEE_RATE = TOTAL_FEE_RATE - EXCHANGE_MARKUP_RATE
@@ -672,6 +676,122 @@ def passenger_info_text(passengers: list[dict[str, str]]) -> str:
     )
 
 
+def payment_notification_body(order: TrainOrder) -> str:
+    selected = order.selected_train or {}
+    passenger_lines = []
+    for index, passenger in enumerate(order.passenger_details, start=1):
+        passenger_lines.append(
+            "\n".join(
+                [
+                    f"乘客 {index}",
+                    f"姓名：{passenger.get('last_name', '')} {passenger.get('first_name', '')}",
+                    f"证件类型：{passenger.get('doc_type', '')}",
+                    f"证件号码：{passenger.get('doc_no', '')}",
+                    f"签发日期：{passenger.get('doc_issued', '')}",
+                    f"到期日期：{passenger.get('doc_expiry', '')}",
+                    f"出生日期：{passenger.get('birth', '')}",
+                    f"性别：{passenger.get('gender', '')}",
+                    f"国籍：{passenger.get('nationality', '')}",
+                ]
+            )
+        )
+    return "\n\n".join(
+        [
+            "火车票订单付款成功",
+            PAYMENT_SUCCESS_NOTICE,
+            "订单信息",
+            f"订单号：{order.order_id}",
+            f"状态：{order.status}",
+            f"路线：{order.from_station} -> {order.to_station}",
+            f"出发日期：{order.depart_date}",
+            f"人数：{order.passengers}",
+            f"车次：{selected.get('train_no', '')}",
+            f"开车时间：{selected.get('depart_time', '')}",
+            f"到达时间：{selected.get('arrive_time', '')}",
+            f"运行时间：{selected.get('duration', '')}",
+            f"座席：{selected.get('seat', '')}",
+            f"座位/铺位：{selected.get('seat_detail', '')}",
+            f"票面金额：{order.ticket_total_local} {order.ticket_currency}",
+            f"人民币总价：{order.base_amount:.2f} 元",
+            f"实际应付：{order.payable_amount:.2f} 元",
+            "付款信息",
+            f"支付宝业务流水号：{order.payment_ref}",
+            f"付款金额：{order.paid_amount:.2f} 元" if order.paid_amount is not None else "付款金额：",
+            f"付款时间：{order.paid_at}",
+            f"付款截图服务器路径：{order.proof_path}",
+            "联系人",
+            f"微信：{order.contact_wechat}",
+            f"手机：{order.contact_phone}",
+            f"邮箱：{order.contact_email}",
+            "乘客资料",
+            "\n\n".join(passenger_lines),
+        ]
+    )
+
+
+def build_payment_notification(order: TrainOrder) -> EmailMessage:
+    recipient = os.getenv("TRAIN_TICKET_NOTIFY_EMAIL", "bldderblack@gmail.com")
+    sender = os.getenv("TRAIN_TICKET_SMTP_FROM") or os.getenv("TRAIN_TICKET_SMTP_USER") or "quiet-atlas@localhost"
+    message = EmailMessage()
+    message["Subject"] = f"火车票付款成功：{order.order_id}"
+    message["From"] = sender
+    message["To"] = recipient
+    message.set_content(payment_notification_body(order))
+    proof_path = Path(order.proof_path)
+    if proof_path.exists():
+        message.add_attachment(
+            proof_path.read_bytes(),
+            maintype="image",
+            subtype=(proof_path.suffix.lower().lstrip(".") or "jpeg"),
+            filename=proof_path.name,
+        )
+    return message
+
+
+def save_notification_outbox(message: EmailMessage, order_id: str) -> Path:
+    EMAIL_OUTBOX_DIR.mkdir(parents=True, exist_ok=True)
+    outbox_path = EMAIL_OUTBOX_DIR / f"{order_id}.eml"
+    outbox_path.write_bytes(message.as_bytes())
+    return outbox_path
+
+
+def send_payment_notification(order_id: str) -> None:
+    with _lock:
+        orders = load_orders()
+        order = require_order(orders, order_id)
+        message = build_payment_notification(order)
+        outbox_path = save_notification_outbox(message, order_id)
+        smtp_host = os.getenv("TRAIN_TICKET_SMTP_HOST", "").strip()
+        if not smtp_host:
+            append_history(order, f"payment notification saved: {outbox_path}")
+            save_orders(orders)
+            return
+        smtp_port = int(os.getenv("TRAIN_TICKET_SMTP_PORT", "587"))
+        smtp_user = os.getenv("TRAIN_TICKET_SMTP_USER", "").strip()
+        smtp_password = os.getenv("TRAIN_TICKET_SMTP_PASSWORD", "")
+        smtp_ssl = os.getenv("TRAIN_TICKET_SMTP_SSL", "false").lower() == "true"
+        smtp_starttls = os.getenv("TRAIN_TICKET_SMTP_STARTTLS", "true").lower() == "true"
+    try:
+        if smtp_ssl:
+            smtp_client: smtplib.SMTP = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=15)
+        else:
+            smtp_client = smtplib.SMTP(smtp_host, smtp_port, timeout=15)
+        with smtp_client as client:
+            if smtp_starttls and not smtp_ssl:
+                client.starttls()
+            if smtp_user:
+                client.login(smtp_user, smtp_password)
+            client.send_message(message)
+        note = f"payment notification sent to {message['To']}"
+    except Exception as exc:
+        note = f"payment notification saved only: {outbox_path}; send error: {exc}"
+    with _lock:
+        orders = load_orders()
+        order = require_order(orders, order_id)
+        append_history(order, note)
+        save_orders(orders)
+
+
 @app.post("/api/train-availability")
 def train_availability(payload: dict[str, Any]) -> dict[str, Any]:
     required = ["from_station", "to_station", "depart_date"]
@@ -819,6 +939,7 @@ async def submit_payment(
         append_history(order, "payment accepted")
         save_orders(orders)
 
+    background_tasks.add_task(send_payment_notification, order_id)
     background_tasks.add_task(start_browser_assisted_booking, order_id)
     return {"order_id": order_id, "status": "paid"}
 
