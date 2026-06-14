@@ -299,14 +299,9 @@ def parse_positive_int(value: Any, default: int = 1) -> int:
 
 
 def default_currency_for_departure(from_station: str, train_country: str = "") -> str:
-    country = str(train_country or "").strip().upper()
-    if country == "UZ":
-        return "UZS"
-    if country == "KZ":
-        return "KZT"
-    uzbek_stations = {"Tashkent", "Samarkand", "Bukhara", "Khiva", "Urgench", "Nukus", "Andijan", "Fergana"}
-    if from_station in uzbek_stations:
-        return "UZS"
+    # The synchronized booking page is a Kazakhstan platform and often omits
+    # the currency label in visible fare buttons. Treat unlabeled fares as KZT;
+    # only switch to UZS when the page text explicitly says so.
     return "KZT"
 
 
@@ -426,6 +421,8 @@ def normalize_seat_label(label: str) -> str:
         return "一等卧铺"
     if "2nd" in lowered and "sleeper" in lowered:
         return "二等卧铺"
+    if "3rd" in lowered and "sleeper" in lowered:
+        return "三等卧铺"
     if "seating" in lowered:
         return "座席"
     if re.fullmatch(r"\d+\s+seats?", label.strip(), re.I):
@@ -440,6 +437,7 @@ def normalize_seat_detail(value: str, seat_label: str = "") -> str:
     text = re.sub(r"\bSeat\s+(\d+)\b", r"\1号座位", text, flags=re.I)
     text = re.sub(r"\bSleep\s+(\d+)\b", lambda m: f"{m.group(1)}号{'下铺' if int(m.group(1)) % 2 else '上铺'}", text, flags=re.I)
     text = re.sub(r"\bSleeper\s+(\d+)\b", lambda m: f"{m.group(1)}号{'下铺' if int(m.group(1)) % 2 else '上铺'}", text, flags=re.I)
+    text = re.sub(r"\bPlatz\s+(\d+)\b", lambda m: f"{m.group(1)}号{'下铺' if int(m.group(1)) % 2 else '上铺'}", text, flags=re.I)
     text = re.sub(r"\bUpper\b", "上铺", text, flags=re.I)
     text = re.sub(r"\bLower\b", "下铺", text, flags=re.I)
     text = re.sub(r"\bVIP\s+(\d+)\b", r"VIP \1号铺位", text, flags=re.I)

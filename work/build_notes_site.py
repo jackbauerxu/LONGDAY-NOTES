@@ -3334,6 +3334,7 @@ if (trainTicketTool) {
       .replace(/\bUpper\b/gi, "上铺")
       .replace(/\bLower\b/gi, "下铺");
     text = text.replace(/\bSleep(?:er)?\s+(\d+)\b/gi, (_, n) => `${n}号${Number(n) % 2 ? "下铺" : "上铺"}`);
+    text = text.replace(/\bPlatz\s+(\d+)\b/gi, (_, n) => `${n}号${Number(n) % 2 ? "下铺" : "上铺"}`);
     text = text.replace(/^(\d+)\s+(?=\d+号|VIP)/, "$1车 ");
     if (seatLabel.includes("卧铺") && /^\d+车 \d+号$/.test(text)) {
       const number = Number(text.match(/(\d+)号/)?.[1] || 0);
@@ -3347,6 +3348,7 @@ if (trainTicketTool) {
     const lowered = text.toLowerCase();
     if (lowered.includes("1st") && lowered.includes("sleeper")) return "一等卧铺";
     if (lowered.includes("2nd") && lowered.includes("sleeper")) return "二等卧铺";
+    if (lowered.includes("3rd") && lowered.includes("sleeper")) return "三等卧铺";
     if (lowered.includes("seating") || /^\d+\s+seats?$/.test(lowered)) return "座席";
     return text;
   };
